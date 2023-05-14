@@ -2,11 +2,14 @@ var express = require("express");
 var router = express.Router();
 var models = require("../models");
 
-router.get("/", (req, res) => {
+router.get("/", (req, res, next) => {
   console.log("Esto es un mensaje para ver en consola");
   models.materia
     .findAll({
-      attributes: ["id", "nombre","id_carrera"]
+      attributes: ["id", "nombre","id_carrera"],
+      //Asociacion carrera
+      include:[{as:'Carrera-Relacionda', model: models.carrera,
+      attributes: ["id", "nombre"]}]
     })
     .then(materia => res.send(materia))
     .catch(() => res.sendStatus(500));
