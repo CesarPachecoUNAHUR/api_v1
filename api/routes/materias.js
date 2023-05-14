@@ -3,13 +3,10 @@ var router = express.Router();
 var models = require("../models");
 
 router.get("/", (req, res, next) => {
-  console.log("Esto es un mensaje para ver en consola");
   models.materia
     .findAll({
       attributes: ["id", "nombre","id_carrera"],
-      //Asociacion carrera
-      include:[{as:'Carrera-Relacionda', model: models.carrera,
-      attributes: ["id", "nombre"]}]
+      include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]}]
     })
     .then(materia => res.send(materia))
     .catch(() => res.sendStatus(500));
@@ -36,7 +33,7 @@ router.post("/", (req, res) => {
 const findMateria = (id, { onSuccess, onNotFound, onError }) => {
   models.materia
     .findOne({
-      attributes: ["id", "nombre","id_carrera"],
+      attributes: ["id", "nombre"],
       where: { id }
     })
     .then(materia => (materia ? onSuccess(materia) : onNotFound()))
@@ -55,10 +52,8 @@ router.put("/:id", (req, res) => {
   const onSuccess = materia =>
   materia
       .update(
-        { nombre: req.body.nombre,
-          id_carreras: req.body.id_carrera       
-        },
-        { fields: ["nombre","id_carrera"]}
+        { nombre: req.body.nombre },
+        { fields: ["nombre"]}
       )
       .then(() => res.sendStatus(200))
       .catch(error => {
