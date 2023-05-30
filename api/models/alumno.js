@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'id_materia'     // campo con el que voy a igualar
     })  
     
-  };
+  }
   
   return alumno;
 };

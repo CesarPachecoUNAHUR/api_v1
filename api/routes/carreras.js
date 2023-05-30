@@ -2,14 +2,28 @@ var express = require("express");
 var router = express.Router();
 var models = require("../models");
 
-router.get("/", (req, res) => {
-  console.log("Esto es un mensaje para ver en consola");
-  models.carrera
-    .findAll({
+router.get("/", async(req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+
+  const offset = (page - 1) * pageSize;
+  const limit = pageSize;
+
+  try {
+    const users = await models.carrera.findAndCountAll({
+      offset,
+      limit,
       attributes: ["id", "nombre"]
-    })
-    .then(carreras => res.send(carreras))
-    .catch(() => res.sendStatus(500));
+    });
+
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al recuperar los usuarios.' });
+  }
+  
+    
+   
+    
 });
 
 router.post("/", (req, res) => {

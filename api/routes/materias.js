@@ -2,14 +2,27 @@ var express = require("express");
 var router = express.Router();
 var models = require("../models");
 
-router.get("/", (req, res, next) => {
-  models.materia
-    .findAll({
+router.get("/", async(req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+
+  const offset = (page - 1) * pageSize;
+  const limit = pageSize;
+
+  try {
+    const users = await models.materia.findAndCountAll({
+      offset,
+      limit,
       attributes: ["id", "nombre","id_carrera"],
       include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]}]
-    })
-    .then(materia => res.send(materia))
-    .catch(() => res.sendStatus(500));
+    });
+
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al recuperar los usuarios.' });
+  }
+  
+    
 });
 
 router.post("/", (req, res) => {

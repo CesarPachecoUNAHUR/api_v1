@@ -2,16 +2,29 @@ var express = require("express");
 var router = express.Router();
 var models = require("../models");
 
-router.get("/", (req, res, next) => {
-  models.alumno
-    .findAll({
+router.get("/", async(req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+
+  const offset = (page - 1) * pageSize;
+  const limit = pageSize;
+
+  try {
+    const users = await models.alumno.findAll({
+      offset,
+      limit,
       attributes: ["id", "nombre", "apellido", "id_carrera", "id_materia"],
       include:[{as:'Carrera-Relacionada', model:models.carrera, attributes: ["id","nombre"]},
-               {as:'Materia-Relacionada', model:models.materia, attributes: ["id","nombre"]}  
-      ] 
-    })
-    .then(alumno => res.send(alumno))
-    .catch(() => res.sendStatus(500));
+              {as:'Materia-Relacionada', model:models.materia, attributes: ["id","nombre"]}  
+      ]
+    });
+
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al recuperar los usuarios.' });
+  }
+  
+
 });
 
 router.post("/", (req, res) => {
@@ -54,10 +67,14 @@ router.get("/:id", (req, res) => {
 
 router.put("/:id", (req, res) => {
   const onSuccess = alumno =>
-  materia
+    alumno
       .update(
-        { nombre: req.body.nombre },
-        { fields: ["nombre"]}
+        { nombre: req.body.nombre,
+          apellido: req.body.apellido,
+          id_carrera: req.body.id_carrera,
+          id_materia: req.body.id_materia 
+         },
+        { fields: ["nombre", "apellido", "id_carrera", "id_materia"]}
       )
       .then(() => res.sendStatus(200))
       .catch(error => {
