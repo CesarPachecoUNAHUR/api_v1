@@ -1,22 +1,19 @@
 var createError = require('http-errors');
 var express = require('express');
-
-
-
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+ 
 
 var carrerasRouter = require('./routes/carreras');
 var materiasRouter = require('./routes/materias');
 var alumnosRouter = require('./routes/alumnos');
+var userRouter = require('./routes/users');
 
 const { sequelize } = require('./models');
 const process= require('./')
 
 var app = express();
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,7 +28,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//Ruta de loggin
 
+app.use('/usu', userRouter);
 
 // Rutas
 app.use('/car', carrerasRouter);

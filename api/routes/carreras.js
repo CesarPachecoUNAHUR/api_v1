@@ -8,7 +8,7 @@ router.get("/", async(req, res) => {
 
   const offset = (page - 1) * pageSize;
   const limit = pageSize;
-
+  console.log("Estoy aca");
   try {
     const users = await models.carrera.findAndCountAll({
       offset,
@@ -20,10 +20,7 @@ router.get("/", async(req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Error al recuperar los usuarios.' });
   }
-  
-    
-   
-    
+
 });
 
 router.post("/", (req, res) => {
