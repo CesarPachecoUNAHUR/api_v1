@@ -5,11 +5,11 @@ var models = require('../models');
 
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
-//const dotenv = require('dotenv');
+const dotenv = require('dotenv');
 var User = models.user;
 
 
-//dotenv.config();
+dotenv.config();
 
 //Se llamará a este método router.get cada vez que se reciba una solicitud get
 /* GET users listing. */
